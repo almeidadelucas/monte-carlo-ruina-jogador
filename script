@@ -1,0 +1,53 @@
+const jogar = (ca, cb) => {
+	let i;
+	for (i = 0; i < 10000 && ca > 0 && cb > 0; i++) {
+		const r = Math.random();
+
+		if (r < 0.5) {
+			ca++;
+			cb--;
+		} else {
+			ca--;
+			cb++;
+		}
+	}
+
+	if (cb === 0) {
+		return { status: 1, matches: i };
+	}
+
+	if (ca === 0) {
+		return { status: -1, matches: i };
+	}
+
+	return { status: 0, matches: i };
+};
+
+const results = [];
+
+for (let i = 0; i < 1000000; i++) {
+	results.push(jogar(50, 20));
+}
+
+const compiled = results.reduce(
+	(acc, { status, matches }) => {
+		if (status === 1) {
+			acc.status.winA += 1;
+		} else if (status === -1) {
+			acc.status.winB += 1;
+		} else {
+			acc.status.draw += 1;
+		}
+
+		if (acc.matches[matches]) {
+			acc.matches[matches] += 1;
+		} else {
+			acc.matches[matches] = 1;
+		}
+
+		return acc;
+	},
+	{ status: { winA: 0, winB: 0, draw: 0 }, matches: {} }
+);
+
+console.log(compiled);
